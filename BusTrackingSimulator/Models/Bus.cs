@@ -1,5 +1,6 @@
 ﻿namespace BusTrackingSimulator.Models
 {
+    using BusTrackingSimulator.Dtos;
     using System;
 
     public class Bus
@@ -11,10 +12,10 @@
         public int CurrentPassengers { get; set; }
         public TimeSpan TimeToArrival { get; set; }
 
-        public object GetCurrentLocation()
+        public Location GetCurrentLocation()
         {
             var location = CurrentRouteIndex >= Route.Count ? Route.LastOrDefault() : Route[CurrentRouteIndex];
-            return new { latitude = location.Latitude, longitude = location.Longitude };
+            return new Location { Latitude = location.Latitude, Longitude = location.Longitude };
         }
     }
 }
