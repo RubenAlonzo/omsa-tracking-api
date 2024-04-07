@@ -1147,7 +1147,10 @@
         {
             foreach (var bus in Buses)
             {
-                bus.CurrentPassengers = random.Next(bus.Capacity);
+                bus.CurrentPassengers += random.Next(-5, 6);
+                bus.CurrentPassengers = Math.Max(bus.CurrentPassengers, 0); // Ensure CurrentPassengers is not negative
+                bus.CurrentPassengers = Math.Min(bus.CurrentPassengers, bus.Capacity); // Ensure total passengers does not exceed bus capacity
+
                 if (bus.CurrentRouteIndex < bus.Route.Count - 1)
                 {
                     bus.CurrentRouteIndex++;
