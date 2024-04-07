@@ -27,35 +27,31 @@ namespace BusTrackingSimulator.Controllers
             try
             {
                 var buses = _busTrackerService.GetUpdatedBusStatus();
-                //var response = new
-                //{
-                //    statusCode = 200,
-                //    isSuccess = true,
-                //    errorMessages = new List<string>(),
-                //    payload = buses.Select(bus => new
-                //    {
-                //        id = bus.BusId,
-                //        location = bus.GetCurrentLocation(),
-                //        capacity = bus.Capacity,
-                //        currentPassengers = bus.CurrentPassengers,
-                //        timeToArrival = bus.TimeToArrival
-                //    })
-                //};
-                
-                var response = new ResponseDTO<List<BusInfoDTO>>
+                var response = new ResponseDTO<List<BusStopDTO>>
                 {
                     StatusCode = "200",
                     IsSuccess = true,
                     ErrorMessages = new List<string>(),
-                    Payload = buses.Select(bus => new BusInfoDTO
+                    Payload = new List<BusStopDTO>
                     {
-                        Id = bus.BusId,
-                        Location = bus.GetCurrentLocation(),
-                        Capacity = bus.Capacity,
-                        CurrentPassengers = bus.CurrentPassengers,
-                        TimeToArrival = bus.TimeToArrival
-                    }).ToList()
+                        new BusStopDTO()
+                        {
+                            Id = 777,
+                            Name = "Bus Stop 1",
+                            IsFavorite = false,
+                            Location = new Location() { Latitude = 18.480996938618595, Longitude = -69.9148515636799 },
+                            Buses = buses.Select(bus => new BusInfoDTO
+                            {
+                                Id = bus.BusId,
+                                Location = bus.GetCurrentLocation(),
+                                Capacity = bus.Capacity,
+                                CurrentPassengers = bus.CurrentPassengers,
+                                TimeToArrival = bus.TimeToArrival
+                            }).ToList()
+                        }
+                    }
                 };
+
                 return Ok(response);
             }
             catch (Exception ex)
