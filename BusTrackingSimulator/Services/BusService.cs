@@ -162,31 +162,37 @@
 
         public void UpdateBusLocations(int targetBusStopId)
         {
+            // Find the index in the bus stops list for the specified target bus stop ID
             int targetIndex = busStops.FindIndex(bs => bs.Id == targetBusStopId);
             if (targetIndex == -1) throw new ArgumentException("Invalid bus stop ID.");
+
+            // Clear buses list at each bus stop to accurately update their locations
+            foreach (var stop in busStops)
+            {
+                stop.Buses.Clear();
+            }
 
             foreach (var bus in buses)
             {
                 // Move bus to next stop
                 bus.UpdateToNextStop(busStops.Count);
-                // Calculate time to arrival for each bus at the target bus stop
-                int stepsToTarget = StepsToTarget(bus.CurrentStopIndex, targetIndex, busStops.Count);
-                TimeSpan timeToArrival = TimeSpan.FromSeconds(stepsToTarget * 39);
 
-                // Find or create the bus info in the target bus stop
-                var busInfo = busStops[targetIndex].Buses.FirstOrDefault(b => int.Parse(b.Id) == bus.BusId);
-                if (busInfo == null)
+                // Update bus info for all stops with correct TimeToArrival and location
+                foreach (var stop in busStops)
                 {
-                    busInfo = new BusInfoDTO { Id = bus.BusId.ToString() };
-                    busStops[targetIndex].Buses.Add(busInfo);
+                    int stepsToTarget = StepsToTarget(bus.CurrentStopIndex, busStops.IndexOf(stop), busStops.Count);
+                    TimeSpan timeToArrival = TimeSpan.FromSeconds(stepsToTarget * 39);
+
+                    // Update the bus info for all stops, not just the target
+                    stop.Buses.Add(new BusInfoDTO
+                    {
+                        Id = bus.BusId.ToString(),
+                        Location = busStops[bus.CurrentStopIndex].Location, // Current bus location
+                        Capacity = bus.Capacity,
+                        CurrentPassengers = bus.CalculateCurrentPassangers(random), // Use correct method name
+                        TimeToArrival = (stop.Id == targetBusStopId) ? timeToArrival : TimeSpan.Zero // Only calculate TimeToArrival for the target stop
+                    });
                 }
-
-                // Update the bus info
-                busInfo.TimeToArrival = timeToArrival;
-                busInfo.Location = busStops[bus.CurrentStopIndex].Location;
-                busInfo.Capacity = bus.Capacity;
-
-                busInfo.CurrentPassengers = bus.CalculateCurrentPassangers(random);
             }
         }
 
@@ -203,5 +209,15 @@
             return busStops;
         }
 
+        public bool ToggleFavoriteStatus(int busStopId)
+        {
+            var busStop = busStops.FirstOrDefault(bs => bs.Id == busStopId);
+            if (busStop != null)
+            {
+                busStop.IsFavorite = !busStop.IsFavorite; // Toggle the IsFavorite status
+                return true; // Successfully toggled
+            }
+            return false; // Bus stop not found
+        }
     }
 }

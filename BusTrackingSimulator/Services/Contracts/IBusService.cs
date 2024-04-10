@@ -6,6 +6,7 @@
     public interface IBusService
     {
         List<BusStopDTO> GetBusStops();
+        bool ToggleFavoriteStatus(int busStopId);
         void UpdateBusLocations(int targetBusStopId);
     }
 }
