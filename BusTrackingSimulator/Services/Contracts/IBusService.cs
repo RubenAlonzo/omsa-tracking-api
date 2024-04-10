@@ -6,6 +6,6 @@
     public interface IBusService
     {
         List<BusStopDTO> GetBusStops();
-        void UpdateBusLocations();
+        void UpdateBusLocations(int targetBusStopId);
     }
 }

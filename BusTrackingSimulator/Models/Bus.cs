@@ -20,6 +20,15 @@
             return busStops[CurrentStopIndex].Location;
         }
 
+        // Method to calculate the current number of passengers on the bus adding +/- 5 passengers
+        public int CalculateCurrentPassangers(Random random)
+        {
+            CurrentPassengers += random.Next(-5, 6);
+            CurrentPassengers = Math.Max(CurrentPassengers, 0); // Ensure CurrentPassengers is not negative
+            CurrentPassengers = Math.Min(CurrentPassengers, Capacity); // Ensure total passengers does not exceed bus capacity
+            return CurrentPassengers;
+        }
+
         // Update to next bus stop
         public void UpdateToNextStop(int totalStops)
         {

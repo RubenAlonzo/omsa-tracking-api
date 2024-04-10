@@ -8,6 +8,7 @@
     {
         private List<BusStopDTO> busStops;
         private List<Bus> buses;
+        private Random random = new Random();
 
         private const string GpxBusStopsFeb =
 """"
@@ -140,15 +141,15 @@
             var busStops1 = GpxParser.ParseRoute(GpxBusStopsImg);
             foreach (var stop in busStops1)
             {
-                busStops.Add(new BusStopDTO { Id = busStops.Count + 1, IsFavorite = false, Name = $"bus stop {busStops.Count + 1}", Location = new Location { Latitude = stop.Latitude, Longitude = stop.Longitude } });
+                busStops.Add(new BusStopDTO { Id = busStops.Count + 1, IsFavorite = false, Name = $"bus stop {busStops.Count + 1}", Location = new Location { Latitude = stop.Latitude, Longitude = stop.Longitude }, Buses = new() });
             }
 
             buses = new List<Bus>
             {
                 // Initialize your buses here
-                new Bus { BusId = 111, Capacity = 50, CurrentPassengers = 11, CurrentStopIndex = 0 },
-                new Bus { BusId = 222, Capacity = 50, CurrentPassengers = 22, CurrentStopIndex = 2 },
-                new Bus { BusId = 333, Capacity = 50, CurrentPassengers = 33, CurrentStopIndex = 4 },
+                new Bus { BusId = 111, Capacity = 50, CurrentPassengers = random.Next(50), CurrentStopIndex = 0 },
+                new Bus { BusId = 222, Capacity = 50, CurrentPassengers = random.Next(50), CurrentStopIndex = 2 },
+                new Bus { BusId = 333, Capacity = 50, CurrentPassengers = random.Next(50), CurrentStopIndex = 4 },
             };
 
             // Optionally initialize each bus with a random bus stop location
@@ -159,28 +160,42 @@
             }
         }
 
-        public void UpdateBusLocations()
+        public void UpdateBusLocations(int targetBusStopId)
         {
+            int targetIndex = busStops.FindIndex(bs => bs.Id == targetBusStopId);
+            if (targetIndex == -1) throw new ArgumentException("Invalid bus stop ID.");
+
             foreach (var bus in buses)
             {
+                // Move bus to next stop
                 bus.UpdateToNextStop(busStops.Count);
-            }
+                // Calculate time to arrival for each bus at the target bus stop
+                int stepsToTarget = StepsToTarget(bus.CurrentStopIndex, targetIndex, busStops.Count);
+                TimeSpan timeToArrival = TimeSpan.FromSeconds(stepsToTarget * 39);
 
-            // Update the buses for each bus stop based on the new locations
-            foreach (var stop in busStops)
-            {
-                stop.Buses = buses.Where(b => b.GetCurrentLocation(busStops).Latitude == stop.Location.Latitude &&
-                                              b.GetCurrentLocation(busStops).Longitude == stop.Location.Longitude)
-                                  .Select(b => new BusInfoDTO
-                                  {
-                                      Id = b.BusId.ToString(),
-                                      Location = b.GetCurrentLocation(busStops),
-                                      Capacity = b.Capacity,
-                                      CurrentPassengers = b.CurrentPassengers,
-                                      // Placeholder for TimeToArrival calculation
-                                      TimeToArrival = TimeSpan.FromMinutes(5) // Example value
-                                  }).ToList();
+                // Find or create the bus info in the target bus stop
+                var busInfo = busStops[targetIndex].Buses.FirstOrDefault(b => int.Parse(b.Id) == bus.BusId);
+                if (busInfo == null)
+                {
+                    busInfo = new BusInfoDTO { Id = bus.BusId.ToString() };
+                    busStops[targetIndex].Buses.Add(busInfo);
+                }
+
+                // Update the bus info
+                busInfo.TimeToArrival = timeToArrival;
+                busInfo.Location = busStops[bus.CurrentStopIndex].Location;
+                busInfo.Capacity = bus.Capacity;
+
+                busInfo.CurrentPassengers = bus.CalculateCurrentPassangers(random);
             }
+        }
+
+        private int StepsToTarget(int currentStopIndex, int targetIndex, int totalStops)
+        {
+            if (currentStopIndex <= targetIndex)
+                return targetIndex - currentStopIndex;
+            else
+                return totalStops - currentStopIndex + targetIndex;
         }
 
         public List<BusStopDTO> GetBusStops()

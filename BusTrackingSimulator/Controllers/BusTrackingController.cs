@@ -19,16 +19,16 @@ namespace BusTrackingSimulator.Controllers
         }
 
         [HttpGet("/api/bus-stops")]
-        public ActionResult GetBusStops([FromQuery] string busStopId)
+        public ActionResult GetBusStops([FromQuery] string busStopName)
         {
-            if (string.IsNullOrWhiteSpace(busStopId))
+            if (string.IsNullOrWhiteSpace(busStopName))
             {
                 return BadRequest("Invalid bus stop ID provided.");
             }
 
             try
             {
-                _busService.UpdateBusLocations();
+                _busService.UpdateBusLocations(int.Parse(busStopName));
                 var response = new ResponseDTO<List<BusStopDTO>>
                 {
                     StatusCode = "200",
