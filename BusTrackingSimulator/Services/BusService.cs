@@ -190,7 +190,7 @@
                         Location = busStops[bus.CurrentStopIndex].Location, // Current bus location
                         Capacity = bus.Capacity,
                         CurrentPassengers = bus.CalculateCurrentPassangers(random), // Use correct method name
-                        TimeToArrival = (stop.Id == targetBusStopId) ? timeToArrival : TimeSpan.Zero // Only calculate TimeToArrival for the target stop
+                        TimeToArrival = timeToArrival
                     });
                 }
             }
