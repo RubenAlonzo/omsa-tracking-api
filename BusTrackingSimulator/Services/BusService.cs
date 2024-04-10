@@ -148,8 +148,8 @@
             {
                 // Initialize your buses here
                 new Bus { BusId = 111, Capacity = 50, CurrentPassengers = random.Next(50), CurrentStopIndex = 1 },
-                new Bus { BusId = 222, Capacity = 50, CurrentPassengers = random.Next(50), CurrentStopIndex = 3 },
-                new Bus { BusId = 333, Capacity = 50, CurrentPassengers = random.Next(50), CurrentStopIndex = 5 },
+                new Bus { BusId = 222, Capacity = 50, CurrentPassengers = random.Next(50), CurrentStopIndex = 2 },
+                new Bus { BusId = 333, Capacity = 50, CurrentPassengers = random.Next(50), CurrentStopIndex = 3 },
             };
 
             // Optionally initialize each bus with a random bus stop location
@@ -181,7 +181,7 @@
                 foreach (var stop in busStops)
                 {
                     int stepsToTarget = StepsToTarget(bus.CurrentStopIndex, busStops.IndexOf(stop), busStops.Count);
-                    TimeSpan timeToArrival = TimeSpan.FromSeconds(stepsToTarget * 39);
+                    TimeSpan timeToArrival = TimeSpan.FromSeconds(stepsToTarget * 29);
 
                     // Update the bus info for all stops, not just the target
                     stop.Buses.Add(new BusInfoDTO
