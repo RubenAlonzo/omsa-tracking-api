@@ -147,9 +147,9 @@
             buses = new List<Bus>
             {
                 // Initialize your buses here
-                new Bus { BusId = 111, Capacity = 50, CurrentPassengers = random.Next(50), CurrentStopIndex = 0 },
-                new Bus { BusId = 222, Capacity = 50, CurrentPassengers = random.Next(50), CurrentStopIndex = 2 },
-                new Bus { BusId = 333, Capacity = 50, CurrentPassengers = random.Next(50), CurrentStopIndex = 4 },
+                new Bus { BusId = 111, Capacity = 50, CurrentPassengers = random.Next(50), CurrentStopIndex = 1 },
+                new Bus { BusId = 222, Capacity = 50, CurrentPassengers = random.Next(50), CurrentStopIndex = 3 },
+                new Bus { BusId = 333, Capacity = 50, CurrentPassengers = random.Next(50), CurrentStopIndex = 5 },
             };
 
             // Optionally initialize each bus with a random bus stop location
