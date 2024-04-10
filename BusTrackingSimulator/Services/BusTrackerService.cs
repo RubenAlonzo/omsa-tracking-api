@@ -6,7 +6,7 @@
 
     public class BusTrackerService : IBusTrackerService
     {
-        private List<Bus> Buses;
+        private List<BusModelGpx> Buses;
         private Random random = new Random();
 
         //        private const string GpxData1 =
@@ -1127,12 +1127,12 @@
                 ("777", GpxData3) 
             };
 
-            Buses = new List<Bus>();
+            Buses = new List<BusModelGpx>();
 
             foreach (var busRoute in busRoutes)
             {
                 var route = GpxParser.ParseRoute(busRoute.GpxData);
-                Buses.Add(new Bus
+                Buses.Add(new BusModelGpx
                 {
                     BusId = busRoute.BusId,
                     Route = route,
@@ -1143,7 +1143,7 @@
             }
         }
 
-        public List<Bus> GetUpdatedBusStatus()
+        public List<BusModelGpx> GetUpdatedBusStatus()
         {
             foreach (var bus in Buses)
             {

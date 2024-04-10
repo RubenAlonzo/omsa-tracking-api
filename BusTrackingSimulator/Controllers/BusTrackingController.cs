@@ -10,10 +10,39 @@ namespace BusTrackingSimulator.Controllers
     public class BusTrackingController : ControllerBase
     {
         private readonly IBusTrackerService _busTrackerService;
+        private readonly IBusService _busService;
 
-        public BusTrackingController(IBusTrackerService busTrackerService)
+        public BusTrackingController(IBusTrackerService busTrackerService, IBusService busService)
         {
             _busTrackerService = busTrackerService;
+            _busService = busService;
+        }
+
+        [HttpGet("/api/bus-stops")]
+        public ActionResult GetBusStops([FromQuery] string busStopId)
+        {
+            if (string.IsNullOrWhiteSpace(busStopId))
+            {
+                return BadRequest("Invalid bus stop ID provided.");
+            }
+
+            try
+            {
+                _busService.UpdateBusLocations();
+                var response = new ResponseDTO<List<BusStopDTO>>
+                {
+                    StatusCode = "200",
+                    IsSuccess = true,
+                    ErrorMessages = new List<string>(),
+                    Payload = _busService.GetBusStops()
+                };
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"An error occurred: {ex.Message}");
+            }
         }
 
         [HttpGet]
